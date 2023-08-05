@@ -1,0 +1,31 @@
+*{
+    box-sizing: border-box;
+    padding: 0px;
+    margin: 0px;
+}
+body{
+    min-height: 100svh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aliceblue;
+}
+.board{
+    width: min(500px, 100vw);
+    height: min(500px, 100vw);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+.board > button{
+    border: none;
+    background-color: white;
+    border-right: 3px solid aliceblue;
+    border-bottom: 3px solid aliceblue;
+}
+.board > button:nth-child(3n){
+    border-right: none;
+}
+.board > button:nth-last-child(-n+3){
+    border-bottom: none;
+}
