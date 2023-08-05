@@ -1,15 +1,16 @@
 const gameBoard = (()=>{
     let board = new Array(3).fill('').map(()=> new Array(3).fill(''));
     const logBoard = ()=>{
-        console.log('_________________');
+        console.log('[!] Board update');
         console.log(board[0]);
         console.log(board[1]);
         console.log(board[2]);
-        console.log('_________________');
     }
+    const getBoard = ()=> board;
     const checkForWinner = (mark)=>{
         let won = checkForDiagonal(mark) || checkForVertical(mark) || checkForHorizontal(mark);
         won? console.log(`${mark} has won`) : console.log(`No one won`);
+        console.log('');
     }
     const checkForHorizontal = (mark)=>{
         let won = false;
@@ -44,8 +45,5 @@ const gameBoard = (()=>{
         logBoard();
         checkForWinner('Y');
     }
-    return {placeX,placeY};
+    return {placeX,placeY,getBoard};
 })();
-gameBoard.placeX(1,0);
-gameBoard.placeX(1,1);
-gameBoard.placeX(2,2);
