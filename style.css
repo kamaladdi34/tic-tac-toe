@@ -30,3 +30,21 @@ body{
 .board > button:nth-last-child(-n+3){
     border-bottom: none;
 }
+.new-game{
+    border: none;
+    width: min(500px, 100vw);
+    background-image: linear-gradient(#42A1EC, #0070C9);
+    margin-bottom: 10px;
+    padding: 15px 30px;
+    text-align: center;
+    text-transform: uppercase;
+    background-size: 200% auto;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    display: block;
+    border: 0px;
+    background-image: linear-gradient(45deg, #FF512F 0%, #F09819  51%, #FF512F  100%);
+    cursor: pointer;
+    user-select: none;
+}
