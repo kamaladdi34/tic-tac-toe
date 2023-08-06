@@ -33,31 +33,27 @@ const gameBoard = (()=>{
     const checkCoordinates = (x,y) =>  (x >= 0 && x <= 3 ) && (y >= 0 && y <= 3 );
     const placeX = (x,y)=>{
         if(board[x][y] != ''){
-            console.log(`cell {${x},${y}} is not empty`);
-            return {won:false};
+            return {won:false, error:`cell {${x},${y}} is not empty`};
         }
         if(!checkCoordinates(x,y)){
-            console.log(`Wrong cell coordinates {${x},${y}}`);
-            return {won:false};
+            return {won:false, error:`Wrong cell coordinates {${x},${y}}`};
         }
         board[x][y] = 'X';
         displayManager.setCell(x,y,'X');
         console.log(`X placed in {${x},${y}}`);
-        return {won:checkForWinner('X')};
+        return {won:checkForWinner('X'), error:null};
     }
     const placeY = (x,y)=>{
         if(board[x][y] != ''){
-            console.log(`cell {${x},${y}} is not empty`);
-            return {won:false};
+            return {won:false, error:`cell {${x},${y}} is not empty`};
         }
         if(!checkCoordinates(x,y)){
-            console.log(`Wrong cell coordinates {${x},${y}}`);
-            return {won:false};
+            return {won:false, error:`Wrong cell coordinates {${x},${y}}`};
         }
         board[x][y] = 'Y';
         displayManager.setCell(x,y,'Y');
         console.log(`Y placed in {${x},${y}}`);
-        return {won:checkForWinner('Y')};
+        return {won:checkForWinner('Y') , error:null};
     }
     return {placeX, placeY, getBoard, checkCoordinates};
 })();
@@ -114,11 +110,14 @@ const gameManager = (()=>{
         }
         let player = currentGame.getCurrentPlayer();
         let result = player.mark == 'X'? gameBoard.placeX(x,y) : gameBoard.placeY(x,y);
-        currentGame.passTurn();
-        console.log(result);
         if(result.won){
             console.log(player1.mark + ' won');
             currentGame.endGame();
+        }
+        if(!result.error){
+            currentGame.passTurn();
+        }else{
+            console.log(result.error);
         }
     }
     return {newGame, placeMark}
