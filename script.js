@@ -41,10 +41,10 @@ const gameBoard = (()=>{
 })();
 
 const displayManager = (()=>{
-    const cells = document.querySelectorAll('[data-cell]');
+    const cells = document.querySelectorAll('[data-coordinates]');
     cells.forEach(cell =>{
-        cell.addEventListener('click',(event)=>{
-            console.log(cell.getAttribute('data-cell'));
+        cell.addEventListener('click', event =>{
+            console.log(cell.getAttribute('data-coordinates'));
         })
     })
 })();
