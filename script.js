@@ -7,6 +7,13 @@ const gameBoard = (()=>{
         won? console.log(`${mark} has won`) : console.log(`No one won`);
         return won;
     }
+    const resetBoard = ()=>{
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                board[i][j] = '';
+            }
+        }
+    }
     const checkForHorizontal = (mark)=>{
         let won = false;
         for (let i = 0; i < board.length; i++) {
@@ -33,18 +40,20 @@ const gameBoard = (()=>{
     const checkCoordinates = (x,y) =>  (x >= 0 && x <= 3 ) && (y >= 0 && y <= 3 );
     const placeX = (x,y)=>{
         if(board[x][y] != ''){
+            console.log(board[x][y]);
             return {won:false, error:`cell {${x},${y}} is not empty`};
         }
         if(!checkCoordinates(x,y)){
             return {won:false, error:`Wrong cell coordinates {${x},${y}}`};
         }
         board[x][y] = 'X';
-        displayManager.setCell(x,y,'❌');
+        displayManager.setCell(x,y,'🥖');
         console.log(`X placed in {${x},${y}}`);
         return {won:checkForWinner('X'), error:null};
     }
     const placeO = (x,y)=>{
         if(board[x][y] != ''){
+            console.log(board[x][y]);
             return {won:false, error:`cell {${x},${y}} is not empty`};
         }
         if(!checkCoordinates(x,y)){
@@ -55,7 +64,54 @@ const gameBoard = (()=>{
         console.log(`O placed in {${x},${y}}`);
         return {won:checkForWinner('O') , error:null};
     }
-    return {placeX, placeO, getBoard, checkCoordinates};
+    return {placeX, placeO, getBoard, checkCoordinates,resetBoard};
+})();
+const displayManager = (()=>{
+    const cells = document.querySelectorAll('[data-coordinates]');
+    const newGameButton = document.querySelector('.new-game-btn');
+    const info = document.querySelector('.info')
+    const Xmark = document.querySelector('.X');
+    const Omark = document.querySelector('.O');
+    Xmark.addEventListener('click', event=>{
+        Xmark.classList.add('chosen');
+        Omark.classList.remove('chosen');
+    })
+    Omark.addEventListener('click', event=>{
+        Omark.classList.add('chosen');
+        Xmark.classList.remove('chosen');
+    })
+    const getChosenMark = ()=>{
+        if(Xmark.classList.contains('chosen')){
+            return 'X';
+        }else{
+            return 'O';
+        }
+    }
+    const setInfo = (content)=>{
+        info.textContent = content;
+    }
+    newGameButton.addEventListener('click',event=>{
+        gameManager.newGame(getChosenMark,false);
+        resetCells();
+    })
+    let cellsBoard = new Array(3).fill('').map(()=> new Array(3).fill(''));
+    cells.forEach(cell =>{
+        let coordinates = cell.getAttribute('data-coordinates').split(',');
+        cellsBoard[coordinates[0]][coordinates[1]] = cell;
+        cell.addEventListener('click', event =>{
+            gameManager.placeMark(coordinates[0], coordinates[1]);
+        })
+    })
+    const setCell = (x, y, mark)=>{
+        console.log(`setting cell {${x},${y}} to ${mark}`);
+        cellsBoard[x][y].textContent = mark;
+    }
+    const resetCells = ()=>{
+        cells.forEach(cell=>{
+            cell.textContent = '';
+        })
+    }
+    return {setCell, resetCells, setInfo}
 })();
 const gameManager = (()=>{
     const player = (mark, isComputer) =>({mark, isPlayerTurn: false, score: 0, isComputer});
@@ -89,6 +145,7 @@ const gameManager = (()=>{
     let player2  = null;
     let currentGame = null;
     const newGame = (player1Mark, vsComputer)=>{
+        gameBoard.resetBoard();
         player1 = player(player1Mark,false);
         player2 = player(player1Mark == 'X'? 'O': 'X',vsComputer);
         currentGame = game(player1, player2);
@@ -121,23 +178,4 @@ const gameManager = (()=>{
         }
     }
     return {newGame, placeMark}
-})();
-gameManager.newGame('X',false);
-console.log(gameBoard.getBoard());
-const displayManager = (()=>{
-    const cells = document.querySelectorAll('[data-coordinates]');
-    let cellsBoard = new Array(3).fill('').map(()=> new Array(3).fill(''));
-    cells.forEach(cell =>{
-        let coordinates = cell.getAttribute('data-coordinates').split(',');
-        cellsBoard[coordinates[0]][coordinates[1]] = cell;
-        cell.addEventListener('click', event =>{
-            gameManager.placeMark(coordinates[0], coordinates[1]);
-        })
-    })
-    console.log(cellsBoard);
-    const setCell = (x, y, mark)=>{
-        console.log(`setting ${x}${y} cell to ${mark}`);
-        cellsBoard[x][y].textContent = mark;
-    }
-    return {setCell}
 })();
