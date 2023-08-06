@@ -1,11 +1,5 @@
 const gameBoard = (()=>{
     let board = new Array(3).fill('').map(()=> new Array(3).fill(''));
-    const logBoard = ()=>{
-        console.log('[!] Board update');
-        console.log(board[0]);
-        console.log(board[1]);
-        console.log(board[2]);
-    }
     const getBoard = ()=> board;
     const checkForWinner = (mark)=>{
         let won = checkForDiagonal(mark) || checkForVertical(mark) || checkForHorizontal(mark);
@@ -37,12 +31,10 @@ const gameBoard = (()=>{
     }
     const placeX = (x,y)=>{
         board[x][y] = 'X';
-        logBoard();
         checkForWinner('X');
     }
     const placeY = (x,y)=>{
         board[x][y] = 'Y';
-        logBoard();
         checkForWinner('Y');
     }
     return {placeX,placeY,getBoard};
