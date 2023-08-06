@@ -41,6 +41,7 @@ const gameBoard = (()=>{
             return {won:false};
         }
         board[x][y] = 'X';
+        displayManager.setCell(x,y,'X');
         console.log(`X placed in {${x},${y}}`);
         return {won:checkForWinner('X')};
     }
@@ -54,6 +55,7 @@ const gameBoard = (()=>{
             return {won:false};
         }
         board[x][y] = 'Y';
+        displayManager.setCell(x,y,'Y');
         console.log(`Y placed in {${x},${y}}`);
         return {won:checkForWinner('Y')};
     }
@@ -122,17 +124,21 @@ const gameManager = (()=>{
     return {newGame, placeMark}
 })();
 gameManager.newGame('X',false);
-gameManager.placeMark(0,0);
-gameManager.placeMark(2,0);
-gameManager.placeMark(1,1);
-gameManager.placeMark(2,1);
-gameManager.placeMark(2,2);
 console.log(gameBoard.getBoard());
 const displayManager = (()=>{
     const cells = document.querySelectorAll('[data-coordinates]');
+    let cellsBoard = new Array(3).fill('').map(()=> new Array(3).fill(''));
     cells.forEach(cell =>{
+        let coordinates = cell.getAttribute('data-coordinates').split(',');
+        cellsBoard[coordinates[0]][coordinates[1]] = cell;
         cell.addEventListener('click', event =>{
-            console.log(cell.getAttribute('data-coordinates'));
+            gameManager.placeMark(coordinates[0], coordinates[1]);
         })
     })
+    console.log(cellsBoard);
+    const setCell = (x, y, mark)=>{
+        console.log(`setting ${x}${y} cell to ${mark}`);
+        cellsBoard[x][y].textContent = mark;
+    }
+    return {setCell}
 })();
