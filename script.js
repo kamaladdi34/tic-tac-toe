@@ -111,7 +111,7 @@ const gameManager = (()=>{
         let player = currentGame.getCurrentPlayer();
         let result = player.mark == 'X'? gameBoard.placeX(x,y) : gameBoard.placeY(x,y);
         if(result.won){
-            console.log(player1.mark + ' won');
+            console.log(player.mark + ' won');
             currentGame.endGame();
         }
         if(!result.error){
