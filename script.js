@@ -43,19 +43,19 @@ const gameBoard = (()=>{
         console.log(`X placed in {${x},${y}}`);
         return {won:checkForWinner('X'), error:null};
     }
-    const placeY = (x,y)=>{
+    const placeO = (x,y)=>{
         if(board[x][y] != ''){
             return {won:false, error:`cell {${x},${y}} is not empty`};
         }
         if(!checkCoordinates(x,y)){
             return {won:false, error:`Wrong cell coordinates {${x},${y}}`};
         }
-        board[x][y] = 'Y';
-        displayManager.setCell(x,y,'Y');
-        console.log(`Y placed in {${x},${y}}`);
-        return {won:checkForWinner('Y') , error:null};
+        board[x][y] = 'O';
+        displayManager.setCell(x,y,'O');
+        console.log(`O placed in {${x},${y}}`);
+        return {won:checkForWinner('O') , error:null};
     }
-    return {placeX, placeY, getBoard, checkCoordinates};
+    return {placeX, placeO, getBoard, checkCoordinates};
 })();
 const gameManager = (()=>{
     const player = (mark, isComputer) =>({mark, isPlayerTurn: false, score: 0, isComputer});
@@ -90,7 +90,7 @@ const gameManager = (()=>{
     let currentGame = null;
     const newGame = (player1Mark, vsComputer)=>{
         player1 = player(player1Mark,false);
-        player2 = player(player1Mark == 'X'? 'Y': 'X',vsComputer);
+        player2 = player(player1Mark == 'X'? 'O': 'X',vsComputer);
         currentGame = game(player1, player2);
         currentGame.startGame();
         console.log(player1, player2);
@@ -109,14 +109,14 @@ const gameManager = (()=>{
             return;
         }
         let player = currentGame.getCurrentPlayer();
-        let result = player.mark == 'X'? gameBoard.placeX(x,y) : gameBoard.placeY(x,y);
+        let result = player.mark == 'X'? gameBoard.placeX(x,y) : gameBoard.placeO(x,y);
         if(result.won){
             console.log(player.mark + ' won');
             currentGame.endGame();
         }
-        if(!result.error){
+        if(!result.error && !result.won){
             currentGame.passTurn();
-        }else{
+        }else if(result.error){
             console.log(result.error);
         }
     }
