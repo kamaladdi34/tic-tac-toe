@@ -39,3 +39,12 @@ const gameBoard = (()=>{
     }
     return {placeX,placeY,getBoard};
 })();
+
+const displayManager = (()=>{
+    const cells = document.querySelectorAll('[data-cell]');
+    cells.forEach(cell =>{
+        cell.addEventListener('click',(event)=>{
+            console.log(cell.getAttribute('data-cell'));
+        })
+    })
+})();
