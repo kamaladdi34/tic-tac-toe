@@ -4,7 +4,6 @@ const gameBoard = (()=>{
     const checkForWinner = (mark)=>{
         let won = checkForDiagonal(mark) || checkForVertical(mark) || checkForHorizontal(mark);
         won? console.log(`${mark} has won`) : console.log(`No one won`);
-        console.log('');
     }
     const checkForHorizontal = (mark)=>{
         let won = false;
@@ -29,17 +28,25 @@ const gameBoard = (()=>{
         let secondDiagonal = board[2][0] == mark && board[1][1] == mark && board[0][2] == mark;
         return firstDiagonal || secondDiagonal;
     }
+    const checkCoordinates = (x,y) =>  (x >= 0 && x <= 3 ) && (y >= 0 && y <= 3 );
     const placeX = (x,y)=>{
+        if(!checkCoordinates(x,y)){
+            console.log(`Wrong cell coordinates {${x},${y}}`);
+            return;
+        }
         board[x][y] = 'X';
         checkForWinner('X');
     }
     const placeY = (x,y)=>{
+        if(!checkCoordinates(x,y)){
+            console.log(`Wrong cell coordinates {${x},${y}}`);
+            return;
+        }
         board[x][y] = 'Y';
         checkForWinner('Y');
     }
     return {placeX,placeY,getBoard};
 })();
-
 const displayManager = (()=>{
     const cells = document.querySelectorAll('[data-coordinates]');
     cells.forEach(cell =>{
