@@ -39,7 +39,7 @@ const gameBoard = (()=>{
             return {won:false, error:`Wrong cell coordinates {${x},${y}}`};
         }
         board[x][y] = 'X';
-        displayManager.setCell(x,y,'X');
+        displayManager.setCell(x,y,'❌');
         console.log(`X placed in {${x},${y}}`);
         return {won:checkForWinner('X'), error:null};
     }
@@ -51,7 +51,7 @@ const gameBoard = (()=>{
             return {won:false, error:`Wrong cell coordinates {${x},${y}}`};
         }
         board[x][y] = 'O';
-        displayManager.setCell(x,y,'O');
+        displayManager.setCell(x,y,'🍩');
         console.log(`O placed in {${x},${y}}`);
         return {won:checkForWinner('O') , error:null};
     }
