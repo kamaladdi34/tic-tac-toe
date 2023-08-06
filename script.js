@@ -4,6 +4,7 @@ const gameBoard = (()=>{
     const checkForWinner = (mark)=>{
         let won = checkForDiagonal(mark) || checkForVertical(mark) || checkForHorizontal(mark);
         won? console.log(`${mark} has won`) : console.log(`No one won`);
+        return won;
     }
     const checkForHorizontal = (mark)=>{
         let won = false;
@@ -35,7 +36,7 @@ const gameBoard = (()=>{
             return;
         }
         board[x][y] = 'X';
-        checkForWinner('X');
+        return checkForWinner('X');
     }
     const placeY = (x,y)=>{
         if(!checkCoordinates(x,y)){
@@ -43,10 +44,58 @@ const gameBoard = (()=>{
             return;
         }
         board[x][y] = 'Y';
-        checkForWinner('Y');
+        return checkForWinner('Y');
     }
-    return {placeX,placeY,getBoard};
+    return {placeX, placeY, getBoard, checkCoordinates};
 })();
+const gameManager = (()=>{
+    const player = (mark, isComputer) =>({mark, isPlayerTurn: false, score: 0, isComputer});
+    const game = (player1, player2) =>{
+        const gameStarted = false;
+        const gameEnded = false;
+        const gameOngoing = false;
+        player1.isPlayerTurn = true;
+        const passTurn = ()=>{
+            player1.isPlayerTurn = !player1.isPlayerTurn;
+            player2.isPlayerTurn = !player2.isPlayerTurn;
+            console.log('Turn passed');
+        }
+        const getCurrentPlayer = ()=> player1.isPlayerTurn? player1 : player2; 
+        const startGame = ()=> {
+            gameStarted = true;
+            gameOngoing = true;
+        }
+        const endGame = ()=> {
+            gameStarted = true;
+            gameOngoing = false;
+        }
+        const getGameStatus = ()=>{
+            return {gameStarted, gameEnded}
+        }
+        return {passTurn, getCurrentPlayer, startGame, endGame}
+    };
+    let player1  = null;
+    let player2  = null;
+    let currentGame = null;
+    const newGame = (player1Mark, vsComputer)=>{
+        player1 = player(player1Mark,false);
+        player2 = player(player1Mark == 'X'? 'Y': 'X',vsComputer);
+        currentGame = game(player1, player2);
+        currentGame.startGame();
+        console.log(player1, player2);
+    }
+    const placeMark = (x,y)=>{
+        if(!currentGame || !currentGame.getGameStatus().gameOngoing || !gameBoard.checkCoordinates(x,y)) return;
+        let player = currentGame.getCurrentPlayer();
+        let result = player.mark == 'X'? gameBoard.placeX(x,y) : gameBoard.placeY(x,y);
+        currentGame.passTurn();
+        console.log(player1);
+        console.log(result? `${player.mark} won`:`game still going...`);
+    }
+    return {newGame, placeMark}
+})();
+gameManager.newGame('X',false);
+gameManager.placeMark(2,3);
 const displayManager = (()=>{
     const cells = document.querySelectorAll('[data-coordinates]');
     cells.forEach(cell =>{
