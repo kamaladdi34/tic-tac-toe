@@ -76,6 +76,7 @@ main{
 }
 .info{
     height: 45px;
-    background-color: white;
+    background-color: rgb(255, 230, 0);
     padding: 10px 20px 10px 20px;
+    color: #775400;
 }
