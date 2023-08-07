@@ -22,8 +22,8 @@ body{
 .board > button{
     border: none;
     background-color: white;
-    border-right: 3px solid aliceblue;
-    border-bottom: 3px solid aliceblue;
+    border-right: 5px solid aliceblue;
+    border-bottom: 5px solid aliceblue;
     font-size: 55px;
 }
 .board > button:nth-child(3n){

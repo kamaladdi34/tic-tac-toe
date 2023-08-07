@@ -89,6 +89,7 @@ const displayManager = (()=>{
     const setInfo = (content)=>{
         info.textContent = content;
     }
+    setInfo('Set settings and start a new game.');
     newGameButton.addEventListener('click',event=>{
         gameManager.newGame(getChosenMark(),false);
         resetCells();
