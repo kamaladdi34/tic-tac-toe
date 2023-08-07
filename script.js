@@ -91,7 +91,7 @@ const displayManager = (()=>{
         info.textContent = content;
     }
     newGameButton.addEventListener('click',event=>{
-        gameManager.newGame(getChosenMark,false);
+        gameManager.newGame(getChosenMark(),false);
         resetCells();
     })
     let cellsBoard = new Array(3).fill('').map(()=> new Array(3).fill(''));
@@ -173,6 +173,11 @@ const gameManager = (()=>{
         }
         if(!result.error && !result.won){
             currentGame.passTurn();
+            if(player1.isPlayerTurn){
+                displayManager.setInfo(`It's 🥖's turn`);
+            }else{
+                displayManager.setInfo(`It's 🍩's turn`);
+            }
         }else if(result.error){
             console.log(result.error);
         }
