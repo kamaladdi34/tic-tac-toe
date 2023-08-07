@@ -4,7 +4,6 @@ const gameBoard = (()=>{
     const checkForWinner = (mark)=>{
         let won = false;
         won = checkForDiagonal(mark) || checkForVertical(mark) || checkForHorizontal(mark);
-        won? console.log(`${mark} has won`) : console.log(`No one won`);
         return won;
     }
     const resetBoard = ()=>{
@@ -151,6 +150,11 @@ const gameManager = (()=>{
         currentGame = game(player1, player2);
         currentGame.startGame();
         console.log(player1, player2);
+        if(player1.isPlayerTurn){
+            displayManager.setInfo(`It's ${player1.mark == 'X'?'🥖':'🍩'}'s turn`);
+        }else{
+            displayManager.setInfo(`It's ${player1.mark == 'X'?'🍩':'🥖'}''s turn`);
+        }
     }
     const placeMark = (x,y)=>{
         if(!currentGame){
@@ -169,14 +173,15 @@ const gameManager = (()=>{
         let result = player.mark == 'X'? gameBoard.placeX(x,y) : gameBoard.placeO(x,y);
         if(result.won){
             console.log(player.mark + ' won');
+            displayManager.setInfo(`${player.mark == 'X'?'🥖':'🍩'} won the game!`)
             currentGame.endGame();
         }
         if(!result.error && !result.won){
             currentGame.passTurn();
             if(player1.isPlayerTurn){
-                displayManager.setInfo(`It's 🥖's turn`);
+                displayManager.setInfo(`It's ${player1.mark == 'X'?'🥖':'🍩'}'s turn`);
             }else{
-                displayManager.setInfo(`It's 🍩's turn`);
+                displayManager.setInfo(`It's ${player1.mark == 'X'?'🍩':'🥖'}''s turn`);
             }
         }else if(result.error){
             console.log(result.error);
