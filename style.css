@@ -57,23 +57,23 @@ main{
 }
 .settings{
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: left;
     gap: 10px;
     padding: 10px 20px 10px 20px;
     background-color: white;
 }
-.mark-setting{
-    display: flex;
+.settings .settings{
+    flex-direction: row;
+    align-items: center;
 }
-.mark-setting > button{
-    height: 45px;
-    width: 45px;
-    background-color: rgb(255, 255, 255);
+.settings select{
     border: none;
-    font-size: 25px;
-}
-.mark-setting > button.chosen{
-    border: 2px dashed rgb(0, 187, 255);
+    font-size: 20px;
+    padding: 5px;
+    background-color: rgb(248, 252, 255);
+    padding: 10px;
+    border-radius: 10px;
 }
 .info{
     height: 45px;

@@ -135,23 +135,10 @@ const gameBoard = (()=>{
 const displayManager = (()=>{
     const cells = document.querySelectorAll('[data-coordinates]');
     const newGameButton = document.querySelector('.new-game-btn');
-    const info = document.querySelector('.info')
-    const Xmark = document.querySelector('.X');
-    const Omark = document.querySelector('.O');
-    Xmark.addEventListener('click', event=>{
-        Xmark.classList.add('chosen');
-        Omark.classList.remove('chosen');
-    })
-    Omark.addEventListener('click', event=>{
-        Omark.classList.add('chosen');
-        Xmark.classList.remove('chosen');
-    })
+    const info = document.querySelector('.info');
+    const markChoiceSelect = document.querySelector('#mark-select');
     const getChosenMark = ()=>{
-        if(Xmark.classList.contains('chosen')){
-            return 'X';
-        }else{
-            return 'O';
-        }
+        return markChoiceSelect.value;
     }
     const setInfo = (content)=>{
         info.textContent = content;

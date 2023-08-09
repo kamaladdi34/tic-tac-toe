@@ -12,10 +12,25 @@
     <main>
       <div class="info"></div>
       <div class="settings">
-        <p>Choose a mark:</p>
-        <div class="mark-setting">
-          <button class="X chosen">🥖</button>
-          <button class="O">🍩</button>
+        <div class="mark settings">
+          <p>Choose a mark:</p>
+          <select name="mark-select" id="mark-select">
+            <option value="X">🥖</option>
+            <option value="O">🍩</option>
+          </select>
+        </div>
+
+        <div class="players settings">
+          <p>Players:</p>
+          <select name="player-select" id="player-select" class="player one">
+            <option value="human">👨</option>
+            <option value="robot">🤖</option>
+          </select>
+          <p>VS</p>
+          <select name="player-select" id="player-select" class="player two">
+            <option value="human">👨</option>
+            <option value="robot">🤖</option>
+          </select>
         </div>
       </div>
       <button class="new-game-btn">NEW GAME</button>
