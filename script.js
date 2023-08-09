@@ -245,6 +245,7 @@ const gameManager = (()=>{
             currentGame.endGame();
         }
         if(gameBoard.checkForDraw(gameBoard.getBoard())){
+            displayManager.setInfo(`It's a draw!`)
             currentGame.endGame();
         }
         if(!result.error && !result.won && currentGame.getGameStatus().gameOngoing){
