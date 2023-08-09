@@ -73,12 +73,12 @@ const gameBoard = (()=>{
     const checkForDraw= (board)=> board.every(row => row.every(cell => cell !== ''));
 
     const getOptimalComputerChoice = (board,mark)=>{
-        let minimax = (currentMark, isPlayerTurn)=>{
+        let minimax = (currentMark, isPlayerTurn, depth)=>{
             // Check for terminal states and evaluate the leaf node
             if(checkForWinner(board,mark)){
-                return 1;
+                return 100 - depth;
             }else if(checkForWinner(board,mark == 'X' ? 'O' : 'X')){
-                return -1;
+                return -100 + depth;
             }
             if(checkForDraw(board)){
                 return 0;
@@ -89,7 +89,7 @@ const gameBoard = (()=>{
                     for (let j = 0; j < 3; j++) {
                         if (board[i][j] == '') {
                             board[i][j] = currentMark;
-                            let result = minimax(currentMark == 'X' ? 'O' : 'X', false);
+                            let result = minimax(currentMark == 'X' ? 'O' : 'X', false, depth++);
                             board[i][j] = '';
                             bestScore = Math.max(result, bestScore);
                         }
@@ -102,7 +102,7 @@ const gameBoard = (()=>{
                     for (let j = 0; j < 3; j++) {
                         if (board[i][j] == '') {
                             board[i][j] = currentMark;
-                            let result = minimax(currentMark == 'X' ? 'O' : 'X', true);
+                            let result = minimax(currentMark == 'X' ? 'O' : 'X', true, depth++);
                             board[i][j] = '';
                             bestScore = Math.min(result, bestScore);
                         }
@@ -118,7 +118,7 @@ const gameBoard = (()=>{
             for (let j = 0; j < 3; j++) {
                 if (board[i][j] == '') {
                     board[i][j] = mark;
-                    let result = minimax(mark == 'X' ? 'O' : 'X', false);
+                    let result = minimax(mark == 'X' ? 'O' : 'X', false,0);
                     board[i][j] = '';
                     if (result > bestScore) {
                         bestScore = result;
@@ -130,7 +130,7 @@ const gameBoard = (()=>{
         console.log(bestMove);
         return bestMove;
     }
-    return {placeX, placeO, getBoard, checkCoordinates, resetBoard, getOptimalComputerChoice};
+    return {placeX, placeO, getBoard, checkCoordinates, resetBoard, getOptimalComputerChoice,checkForDraw};
 })();
 const displayManager = (()=>{
     const cells = document.querySelectorAll('[data-coordinates]');
@@ -244,7 +244,10 @@ const gameManager = (()=>{
             displayManager.setInfo(`${player.mark == 'X'?'🥖':'🍩'} won the game!`)
             currentGame.endGame();
         }
-        if(!result.error && !result.won){
+        if(gameBoard.checkForDraw(gameBoard.getBoard())){
+            currentGame.endGame();
+        }
+        if(!result.error && !result.won && currentGame.getGameStatus().gameOngoing){
             currentGame.passTurn();
             if(player1.isPlayerTurn){
                 displayManager.setInfo(`It's ${player1.mark == 'X'?'🥖':'🍩'}'s turn`);
