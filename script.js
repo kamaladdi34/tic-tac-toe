@@ -1,9 +1,9 @@
 const gameBoard = (()=>{
     let board = new Array(3).fill('').map(()=> new Array(3).fill(''));
     const getBoard = ()=> board;
-    const checkForWinner = (mark)=>{
+    const checkForWinner = (board,mark)=>{
         let won = false;
-        won = checkForDiagonal(mark) || checkForVertical(mark) || checkForHorizontal(mark);
+        won = checkForDiagonal(board,mark) || checkForVertical(board,mark) || checkForHorizontal(board,mark);
         return won;
     }
     const resetBoard = ()=>{
@@ -13,7 +13,7 @@ const gameBoard = (()=>{
             }
         }
     }
-    const checkForHorizontal = (mark)=>{
+    const checkForHorizontal = (board,mark)=>{
         let won = false;
         for (let i = 0; i < board.length; i++) {
             if(board[i][0] == mark && board[i][1] == mark && board[i][2] == mark){
@@ -22,7 +22,7 @@ const gameBoard = (()=>{
         }
         return won;
     }
-    const checkForVertical = (mark)=>{
+    const checkForVertical = (board,mark)=>{
         let won = false;
         for (let i = 0; i < board.length; i++) {
             if(board[0][i] == mark && board[1][i] == mark && board[2][i] == mark){
@@ -31,7 +31,7 @@ const gameBoard = (()=>{
         }
         return won;
     }
-    const checkForDiagonal = (mark)=>{
+    const checkForDiagonal = (board,mark)=>{
         let firstDiagonal = board[0][0] == mark && board[1][1] == mark && board[2][2] == mark;
         let secondDiagonal = board[2][0] == mark && board[1][1] == mark && board[0][2] == mark;
         return firstDiagonal || secondDiagonal;
@@ -48,7 +48,7 @@ const gameBoard = (()=>{
         board[x][y] = 'X';
         displayManager.setCell(x,y,'🥖');
         console.log(`X placed in {${x},${y}}`);
-        return {won:checkForWinner('X'), error:null};
+        return {won:checkForWinner(board,'X'), error:null};
     }
     const placeO = (x,y)=>{
         if(board[x][y] != ''){
@@ -61,9 +61,76 @@ const gameBoard = (()=>{
         board[x][y] = 'O';
         displayManager.setCell(x,y,'🍩');
         console.log(`O placed in {${x},${y}}`);
-        return {won:checkForWinner('O') , error:null};
+        return {won:checkForWinner(board,'O') , error:null};
     }
-    return {placeX, placeO, getBoard, checkCoordinates,resetBoard};
+    const copyBoard = (board)=>{
+        let newBoard = new Array(3);
+        for (var i = 0; i < board.length; i++){
+            newBoard[i] = board[i].slice();
+        }
+        return newBoard;
+    }
+    const checkForDraw= (board)=> board.every(row => row.every(cell => cell !== ''));
+
+    const getOptimalComputerChoice = (board,mark)=>{
+        let minimax = (currentMark, isPlayerTurn)=>{
+            // Check for terminal states and evaluate the leaf node
+            if(checkForWinner(board,mark)){
+                return 1;
+            }else if(checkForWinner(board,mark == 'X' ? 'O' : 'X')){
+                return -1;
+            }
+            if(checkForDraw(board)){
+                return 0;
+            }
+            if (isPlayerTurn) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (board[i][j] == '') {
+                            board[i][j] = currentMark;
+                            let result = minimax(currentMark == 'X' ? 'O' : 'X', false);
+                            board[i][j] = '';
+                            bestScore = Math.max(result, bestScore);
+                        }
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (board[i][j] == '') {
+                            board[i][j] = currentMark;
+                            let result = minimax(currentMark == 'X' ? 'O' : 'X', true);
+                            board[i][j] = '';
+                            bestScore = Math.min(result, bestScore);
+                        }
+                    }
+                }
+                return bestScore;
+            }
+        }
+        let bestMove;
+        let bestScore = -Infinity;
+    
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (board[i][j] == '') {
+                    board[i][j] = mark;
+                    let result = minimax(mark == 'X' ? 'O' : 'X', false);
+                    board[i][j] = '';
+                    if (result > bestScore) {
+                        bestScore = result;
+                        bestMove = { x: i, y: j };
+                    }
+                }
+            }
+        }
+        console.log(bestMove);
+        return bestMove;
+    }
+    return {placeX, placeO, getBoard, checkCoordinates, resetBoard, getOptimalComputerChoice};
 })();
 const displayManager = (()=>{
     const cells = document.querySelectorAll('[data-coordinates]');
@@ -91,7 +158,7 @@ const displayManager = (()=>{
     }
     setInfo('Set settings and start a new game.');
     newGameButton.addEventListener('click',event=>{
-        gameManager.newGame(getChosenMark(),false);
+        gameManager.newGame(getChosenMark(),true);
         resetCells();
     })
     let cellsBoard = new Array(3).fill('').map(()=> new Array(3).fill(''));
@@ -183,6 +250,10 @@ const gameManager = (()=>{
                 displayManager.setInfo(`It's ${player1.mark == 'X'?'🥖':'🍩'}'s turn`);
             }else{
                 displayManager.setInfo(`It's ${player1.mark == 'X'?'🍩':'🥖'}''s turn`);
+            }
+            if(currentGame.getCurrentPlayer().isComputer){
+                let coordinates = gameBoard.getOptimalComputerChoice(gameBoard.getBoard(),currentGame.getCurrentPlayer().mark);
+                placeMark(coordinates.x,coordinates.y);
             }
         }else if(result.error){
             console.log(result.error);
