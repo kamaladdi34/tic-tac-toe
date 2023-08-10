@@ -265,7 +265,7 @@ const gameManager = (()=>{
                 displayManager.setInfo(`It's ${player1.mark == 'X'?'🍩':'🥖'}''s turn`);
             }
             if(currentGame.getCurrentPlayer().isComputer){
-                await sleep(300);
+                await sleep(1000);
                 let coordinates = gameBoard.getOptimalComputerChoice(gameBoard.getBoard(),currentGame.getCurrentPlayer().mark);
                 placeMark(coordinates.x,coordinates.y);
             }
