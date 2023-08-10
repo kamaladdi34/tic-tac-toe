@@ -60,7 +60,7 @@ main{
 .new-game-btn:hover{
     background-color: #ff0000;
 }
-.new-game-btn:active, .new-game-btn:focus{
+.new-game-btn:active{
     background-color: #ffffff;
     color: #FF512F;
     outline: 2px solid #FF512F;
