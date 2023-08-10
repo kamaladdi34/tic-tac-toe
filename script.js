@@ -112,22 +112,29 @@ const gameBoard = (()=>{
             }
         }
         let bestMove;
-        let bestScore = -Infinity;
-    
+        bestScore = -Infinity;
+        let moves = []
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 if (board[i][j] == '') {
                     board[i][j] = mark;
                     let result = minimax(mark == 'X' ? 'O' : 'X', false,0);
                     board[i][j] = '';
-                    if (result > bestScore) {
-                        bestScore = result;
-                        bestMove = { x: i, y: j };
-                    }
+                    // if (result > bestScore) {
+                    //     bestScore = result;
+                    //     bestMove = { x: i, y: j };
+                    // }
+                    moves.push({score: result, coords: {x:i,y:j}})
                 }
             }
         }
-        console.log(bestMove);
+        let sortedMoves = moves.sort(()=> Math.floor((Math.random()*3)) -1);
+        for (let i = 0; i < sortedMoves.length; i++) {
+            if ( sortedMoves[i].score > bestScore) {
+                bestScore = sortedMoves[i].score;
+                bestMove = sortedMoves[i].coords;
+            }
+        }
         return bestMove;
     }
     return {placeX, placeO, getBoard, checkCoordinates, resetBoard, getOptimalComputerChoice,checkForDraw};
@@ -136,17 +143,25 @@ const displayManager = (()=>{
     const cells = document.querySelectorAll('[data-coordinates]');
     const newGameButton = document.querySelector('.new-game-btn');
     const info = document.querySelector('.info');
+    const playerOneType = document.querySelector('.player.one');
+    const playerTwoType = document.querySelector('.player.two');
     const markChoiceSelect = document.querySelector('#mark-select');
     const getChosenMark = ()=>{
         return markChoiceSelect.value;
+    }
+    const getPlayerOneType = ()=>{
+        return playerOneType.value == 'human'? false: true;
+    }
+    const getPlayerTwoType = ()=>{
+        return playerTwoType.value == 'human'? false: true;
     }
     const setInfo = (content)=>{
         info.textContent = content;
     }
     setInfo('Set settings and start a new game.');
     newGameButton.addEventListener('click',event=>{
-        gameManager.newGame(getChosenMark(),true);
         resetCells();
+        gameManager.newGame(getChosenMark());
     })
     let cellsBoard = new Array(3).fill('').map(()=> new Array(3).fill(''));
     cells.forEach(cell =>{
@@ -165,8 +180,11 @@ const displayManager = (()=>{
             cell.textContent = '';
         })
     }
-    return {setCell, resetCells, setInfo}
+    return {setCell, resetCells, setInfo, getPlayerOneType, getPlayerTwoType}
 })();
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 const gameManager = (()=>{
     const player = (mark, isComputer) =>({mark, isPlayerTurn: false, score: 0, isComputer});
     const game = (player1, player2) =>{
@@ -198,10 +216,10 @@ const gameManager = (()=>{
     let player1  = null;
     let player2  = null;
     let currentGame = null;
-    const newGame = (player1Mark, vsComputer)=>{
+    const newGame = (player1Mark)=>{
         gameBoard.resetBoard();
-        player1 = player(player1Mark,false);
-        player2 = player(player1Mark == 'X'? 'O': 'X',vsComputer);
+        player1 = player(player1Mark,displayManager.getPlayerOneType());
+        player2 = player(player1Mark == 'X'? 'O': 'X',displayManager.getPlayerTwoType());
         currentGame = game(player1, player2);
         currentGame.startGame();
         console.log(player1, player2);
@@ -210,8 +228,12 @@ const gameManager = (()=>{
         }else{
             displayManager.setInfo(`It's ${player1.mark == 'X'?'🍩':'🥖'}''s turn`);
         }
+        if(currentGame.getCurrentPlayer().isComputer){
+            let coordinates = gameBoard.getOptimalComputerChoice(gameBoard.getBoard(),currentGame.getCurrentPlayer().mark);
+            placeMark(coordinates.x,coordinates.y);
+        }
     }
-    const placeMark = (x,y)=>{
+    async function placeMark(x,y){
         if(!currentGame){
             console.log('There is no game instance');
             return;
@@ -243,6 +265,7 @@ const gameManager = (()=>{
                 displayManager.setInfo(`It's ${player1.mark == 'X'?'🍩':'🥖'}''s turn`);
             }
             if(currentGame.getCurrentPlayer().isComputer){
+                await sleep(300);
                 let coordinates = gameBoard.getOptimalComputerChoice(gameBoard.getBoard(),currentGame.getCurrentPlayer().mark);
                 placeMark(coordinates.x,coordinates.y);
             }
