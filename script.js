@@ -168,7 +168,9 @@ const displayManager = (()=>{
         let coordinates = cell.getAttribute('data-coordinates').split(',');
         cellsBoard[coordinates[0]][coordinates[1]] = cell;
         cell.addEventListener('click', event =>{
-            gameManager.placeMark(coordinates[0], coordinates[1]);
+            if(!gameManager.getCurrentGame().getCurrentPlayer().isComputer){
+                gameManager.placeMark(coordinates[0], coordinates[1]);
+            }
         })
     })
     const setCell = (x, y, mark)=>{
@@ -233,7 +235,8 @@ const gameManager = (()=>{
             placeMark(coordinates.x,coordinates.y);
         }
     }
-    async function placeMark(x,y){
+    const getCurrentGame = ()=> currentGame;
+    const placeMark = (x,y)=>{
         if(!currentGame){
             console.log('There is no game instance');
             return;
@@ -265,7 +268,6 @@ const gameManager = (()=>{
                 displayManager.setInfo(`It's ${player1.mark == 'X'?'🍩':'🥖'}''s turn`);
             }
             if(currentGame.getCurrentPlayer().isComputer){
-                await sleep(1000);
                 let coordinates = gameBoard.getOptimalComputerChoice(gameBoard.getBoard(),currentGame.getCurrentPlayer().mark);
                 placeMark(coordinates.x,coordinates.y);
             }
@@ -273,5 +275,5 @@ const gameManager = (()=>{
             console.log(result.error);
         }
     }
-    return {newGame, placeMark}
+    return {newGame, placeMark, getCurrentGame}
 })();
