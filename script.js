@@ -168,7 +168,7 @@ const displayManager = (()=>{
         let coordinates = cell.getAttribute('data-coordinates').split(',');
         cellsBoard[coordinates[0]][coordinates[1]] = cell;
         cell.addEventListener('click', event =>{
-            if(!gameManager.getCurrentGame().getCurrentPlayer().isComputer){
+            if(gameManager.getCurrentGame() != null &&  !gameManager.getCurrentGame().getCurrentPlayer().isComputer){
                 gameManager.placeMark(coordinates[0], coordinates[1]);
             }
         })
@@ -184,9 +184,6 @@ const displayManager = (()=>{
     }
     return {setCell, resetCells, setInfo, getPlayerOneType, getPlayerTwoType}
 })();
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 const gameManager = (()=>{
     const player = (mark, isComputer) =>({mark, isPlayerTurn: false, score: 0, isComputer});
     const game = (player1, player2) =>{
